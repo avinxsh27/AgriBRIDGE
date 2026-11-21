@@ -1,1 +1,28 @@
-
+        icon: 'sprout'
+      });
+      renderListings();
+      alert('✓ Crop listing published successfully!');
+    }
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const val = input.value.trim();
+      if (!val) return;
+      const logs = document.getElementById('chatLogs');
+      logs.innerHTML += `<div class="bg-slate-100 text-slate-900 p-3 rounded-2xl rounded-tr-xs ml-auto max-w-[85%] font-medium">${val}</div>`;
+      input.value = '';
+      setTimeout(() => {
+        logs.innerHTML += `<div class="bg-emerald-50 text-emerald-950 p-3 rounded-2xl rounded-tl-xs max-w-[85%] border border-emerald-100">
+          உங்களின் கேள்விக்கு நன்றி! நடப்பு சீசனில் தக்காளி மற்றும் நெல் பயிர்களுக்கு தழைச்சத்து மற்றும் வேப்பெண்ணெய் கரைசல் (3%) தெளிப்பது பூச்சி தாக்குதலை தடுக்கும்.
+        </div>`;
+        logs.scrollTop = logs.scrollHeight;
+      }, 500);
+    }
+    function simulateScan() {
+      const res = document.getElementById('scanResult');
+      res.classList.remove('hidden');
+      alert('✓ AI Diagnostic Complete: Disease identified with 94.8% confidence.');
+    }
+    renderListings();
+  </script>
+</body>
+</html>
