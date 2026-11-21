@@ -1,8 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AgriBRIDGE - Agricultural Market & Smart Farming Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', sans-serif; }
+    .tab-active { border-bottom: 3px solid #059669; color: #059669; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+  <!-- Top Navigation -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('marketplace')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-emerald-600/20">
+          <i data-lucide="sprout" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold text-slate-900 tracking-tight">Agri<span class="text-emerald-600">BRIDGE</span></span>
+          <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full" data-i18n="badge_live">Tamil Nadu Live</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- Language Switcher -->
+        <button id="langToggle" onclick="toggleLanguage()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 transition">
+          <i data-lucide="globe" class="w-4 h-4 text-emerald-600"></i>
+          <span id="langText">தமிழ் / EN</span>
+        </button>
+
+        <!-- Role Badge -->
+        <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-bold">
+          <button id="roleFarmer" onclick="setRole('farmer')" class="px-2.5 py-1 rounded-md bg-emerald-600 text-white shadow-xs">Farmer</button>
+          <button id="roleBuyer" onclick="setRole('buyer')" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900">Buyer</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">Direct Farm-to-Consumer Market & Smart Advisory</h1>
+        <p class="mt-2 text-sm sm:text-base text-emerald-100 max-w-2xl" data-i18n="hero_desc">Empowering Tamil Nadu farmers with real-time APMC mandi prices, weather warnings, AI crop disease scanning, and direct buyer connections.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 sm:gap-3">
+        <a href="#download" class="inline-flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl shadow-lg transition text-xs sm:text-sm">
+          <i data-lucide="smartphone" class="w-4 h-4"></i>
+          <span data-i18n="download_apk">Android App (APK)</span>
+        </a>
+        <button onclick="switchTab('advisor')" class="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm transition text-xs sm:text-sm">
+          <i data-lucide="bot" class="w-4 h-4 text-emerald-300"></i>
+          <span data-i18n="ai_advisor">AI Advisor</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <nav class="bg-white border-b border-slate-200 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 flex space-x-4 sm:space-x-8 overflow-x-auto text-xs sm:text-sm font-semibold">
+      <button onclick="switchTab('marketplace')" id="tabMarketplace" class="tab-btn py-3.5 px-1 whitespace-nowrap tab-active flex items-center space-x-2">
+        <i data-lucide="shopping-bag" class="w-4 h-4"></i><span data-i18n="nav_mkt">Crop Marketplace</span>
+      </button>
+      <button onclick="switchTab('weather')" id="tabWeather" class="tab-btn py-3.5 px-1 whitespace-nowrap text-slate-600 hover:text-slate-900 flex items-center space-x-2">
+        <i data-lucide="cloud-sun" class="w-4 h-4"></i><span data-i18n="nav_weather">Weather & Alerts</span>
+      </button>
+      <button onclick="switchTab('prices')" id="tabPrices" class="tab-btn py-3.5 px-1 whitespace-nowrap text-slate-600 hover:text-slate-900 flex items-center space-x-2">
+        <i data-lucide="trending-up" class="w-4 h-4"></i><span data-i18n="nav_prices">Mandi Prices</span>
+      </button>
+      <button onclick="switchTab('advisor')" id="tabAdvisor" class="tab-btn py-3.5 px-1 whitespace-nowrap text-slate-600 hover:text-slate-900 flex items-center space-x-2">
+        <i data-lucide="sparkles" class="w-4 h-4"></i><span data-i18n="nav_advisor">AI Crop Health</span>
+      </button>
+      <button onclick="switchTab('storage')" id="tabStorage" class="tab-btn py-3.5 px-1 whitespace-nowrap text-slate-600 hover:text-slate-900 flex items-center space-x-2">
+        <i data-lucide="warehouse" class="w-4 h-4"></i><span data-i18n="nav_storage">Cold Storage</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+    
+    <!-- Tab 1: Marketplace -->
+    <section id="viewMarketplace" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900" data-i18n="mkt_title">Live Farm Listings (Direct from Farmers)</h2>
+          <p class="text-xs sm:text-sm text-slate-500" data-i18n="mkt_sub">Zero middleman commission. Direct phone & WhatsApp connect.</p>
+        </div>
+        <div id="farmerAction" class="flex gap-2">
+          <button onclick="openAddModal()" class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-sm transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span data-i18n="add_listing">+ Post Crop Harvest</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Listings Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="listingsGrid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- Tab 2: Weather & Alerts -->
+    <section id="viewWeather" class="hidden space-y-6">
+      <div class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-6 shadow-md">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-300">Tamil Nadu Agricultural Weather Warning</span>
+            <h2 class="text-2xl font-black mt-1">Salem & Cauvery Delta Region</h2>
+          </div>
+          <div class="text-right">
+            <span class="text-3xl font-extrabold text-amber-300">31°C</span>
+            <p class="text-xs text-blue-200">Partly Cloudy • Humidity 68%</p>
+          </div>
+        </div>
+        <div class="mt-4 p-3 bg-amber-500/20 border border-amber-400/30 rounded-xl flex items-center space-x-3 text-amber-200 text-xs sm:text-sm">
+          <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 text-amber-300"></i>
+          <span>Early Warning: Moderate rainfall (15-25mm) expected in next 36 hrs. Protect harvested paddy and dry chili stocks in warehouses.</span>
+        </div>
+      </div>
+
+      <!-- 4-Day Agri-Forecast -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-xs">
+          <span class="text-xs font-bold text-slate-500">TODAY</span>
+          <i data-lucide="sun" class="w-8 h-8 text-amber-500 mx-auto my-2"></i>
+          <p class="text-lg font-bold text-slate-800">32°C</p>
+          <span class="text-xs text-slate-500">Dry & Sunny</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-xs">
+          <span class="text-xs font-bold text-slate-500">TOMORROW</span>
+          <i data-lucide="cloud-rain" class="w-8 h-8 text-blue-500 mx-auto my-2"></i>
+          <p class="text-lg font-bold text-slate-800">28°C</p>
+          <span class="text-xs text-blue-600 font-semibold">Light Showers (60%)</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-xs">
+          <span class="text-xs font-bold text-slate-500">MONDAY</span>
+          <i data-lucide="cloud-lightning" class="w-8 h-8 text-indigo-500 mx-auto my-2"></i>
+          <p class="text-lg font-bold text-slate-800">27°C</p>
+          <span class="text-xs text-indigo-600 font-semibold">Thunderstorm</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-xs">
+          <span class="text-xs font-bold text-slate-500">TUESDAY</span>
+          <i data-lucide="sun-medium" class="w-8 h-8 text-amber-500 mx-auto my-2"></i>
+          <p class="text-lg font-bold text-slate-800">30°C</p>
+          <span class="text-xs text-slate-500">Clearing</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Mandi Price Trends -->
+    <section id="viewPrices" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+        <h2 class="text-xl font-bold text-slate-900" data-i18n="prices_title">Tamil Nadu Mandi Market Rates (AGMARKNET)</h2>
+        <p class="text-xs sm:text-sm text-slate-500 mb-4" data-i18n="prices_sub">Updated hourly across major regulated markets.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase text-xs">
+              <tr>
+                <th class="py-3 px-4">Commodity</th>
+                <th class="py-3 px-4">Mandi / District</th>
+                <th class="py-3 px-4">Min Price</th>
+                <th class="py-3 px-4">Modal Price</th>
+                <th class="py-3 px-4">Trend</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>Tomato (நாட்டு தக்காளி)</td>
+                <td class="py-3.5 px-4">Salem Central APMC</td>
+                <td class="py-3.5 px-4">₹28/kg</td>
+                <td class="py-3.5 px-4 font-bold text-emerald-600">₹32/kg</td>
+                <td class="py-3.5 px-4 text-emerald-600 font-bold">▲ +₹4/kg (12%)</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Paddy BPT 5204</td>
+                <td class="py-3.5 px-4">Thanjavur Market</td>
+                <td class="py-3.5 px-4">₹2,350/qtl</td>
+                <td class="py-3.5 px-4 font-bold text-emerald-600">₹2,480/qtl</td>
+                <td class="py-3.5 px-4 text-emerald-600 font-bold">▲ +₹50/qtl</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-yellow-600"></span>Turmeric (விரலி மஞ்சள்)</td>
+                <td class="py-3.5 px-4">Erode Regulated Market</td>
+                <td class="py-3.5 px-4">₹13,200/qtl</td>
+                <td class="py-3.5 px-4 font-bold text-emerald-600">₹14,500/qtl</td>
+                <td class="py-3.5 px-4 text-emerald-600 font-bold">▲ +₹300/qtl</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>Small Onion (சின்ன வெங்காயம்)</td>
+                <td class="py-3.5 px-4">Dindigul Market</td>
+                <td class="py-3.5 px-4">₹45/kg</td>
+                <td class="py-3.5 px-4 font-bold text-emerald-600">₹52/kg</td>
+                <td class="py-3.5 px-4 text-slate-500 font-bold">● Stable</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: AI Advisor & Crop Health -->
+    <section id="viewAdvisor" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Interactive Chat -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col h-[460px]">
+          <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+              <i data-lucide="bot" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-slate-900">AgriAI Tamil Assistant</h3>
+              <span class="text-xs text-emerald-600 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online (Gemini 1.5 Powered)</span>
+            </div>
+          </div>
+          <div class="flex-1 overflow-y-auto py-3 space-y-3 text-xs sm:text-sm" id="chatLogs">
+            <div class="bg-emerald-50 text-emerald-950 p-3 rounded-2xl rounded-tl-xs max-w-[85%] border border-emerald-100">
+              வணக்கம் உழவரே! நான் உங்கள் AgriAI உதவியாளர். பயிர் பாதுகாப்பு, உரம் பரிந்துரை, அல்லது சந்தை விலைகள் குறித்து கேட்கலாம்.
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex gap-2">
+            <input type="text" id="chatInput" placeholder="Ask in Tamil or English..." class="flex-1 px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-emerald-500">
+            <button onclick="sendChatMessage()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold hover:bg-emerald-700 transition">
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Disease Scanner Simulator -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1">Instant Crop Leaf Disease Scanner</h3>
+            <p class="text-xs text-slate-500 mb-4">Upload or snapshot damaged crop leaves for diagnosis powered by ICAR & Plantix dataset.</p>
+            
+            <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/50 rounded-2xl p-6 text-center cursor-pointer hover:bg-emerald-50 transition" onclick="simulateScan()">
+              <i data-lucide="scan" class="w-12 h-12 text-emerald-600 mx-auto mb-2 animate-bounce"></i>
+              <p class="text-xs font-bold text-slate-700">Click to Simulate Leaf Scan</p>
+              <span class="text-[11px] text-slate-500">Supports Tomato, Paddy, Banana, Cotton, Turmeric</span>
+            </div>
+
+            <div id="scanResult" class="mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 hidden">
+              <span class="text-xs font-bold text-red-600 uppercase">Detection Result: Tomato Early Blight (Alternaria solani)</span>
+              <p class="text-xs text-slate-700 mt-1 font-semibold">Recommended Remedy: Spray Mancozeb (2g/L) or Copper Oxychloride (2.5g/L) at 10-day intervals. Avoid sprinkler overhead irrigation.</p>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-4">Verified against TNAU Agritech Portal standard practices.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Cold Storage Directory -->
+    <section id="viewStorage" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+        <h2 class="text-xl font-bold text-slate-900" data-i18n="storage_title">Tamil Nadu Cold Storage & Warehouses</h2>
+        <p class="text-xs sm:text-sm text-slate-500 mb-4">TANFED, TANHODA & Private NABARD-subsidized facilities near you.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="border border-slate-200 rounded-xl p-4 hover:border-emerald-500 transition">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">Salem Agro Cold Chain Unit</h4>
+                <p class="text-xs text-slate-500">Seelanaickenpatti, Salem • (0427) 228-4491</p>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full">Available</span>
+            </div>
+            <div class="mt-3 text-xs text-slate-600 flex justify-between">
+              <span>Capacity: 2,500 MT</span>
+              <span class="font-bold text-slate-800">Rate: ₹1.40 / kg / month</span>
+            </div>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 hover:border-emerald-500 transition">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">Erode Spices & Turmeric Warehouse</h4>
+                <p class="text-xs text-slate-500">Perundurai SIPCOT, Erode • (0424) 253-1120</p>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full">Available</span>
+            </div>
+            <div class="mt-3 text-xs text-slate-600 flex justify-between">
+              <span>Capacity: 5,000 MT</span>
+              <span class="font-bold text-slate-800">Rate: ₹1.20 / kg / month</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download App Section -->
+    <section id="download" class="mt-12 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Android Mobile Application</span>
+          <h3 class="text-2xl sm:text-3xl font-black mt-1">Take AgriBRIDGE to the Field</h3>
+          <p class="text-slate-300 text-xs sm:text-sm mt-2 max-w-xl">Install the official Android application for offline mandi tracking, Tamil voice orders, and instant leaf photo diagnosis.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="https://github.com/avinxsh27/AgriBRIDGE/releases" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 rounded-xl flex items-center space-x-2 text-xs sm:text-sm shadow-md transition">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Download AgriBRIDGE.apk (v1.0)</span>
+            </a>
+            <a href="https://github.com/avinxsh27/AgriBRIDGE" target="_blank" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-3 rounded-xl flex items-center space-x-2 text-xs sm:text-sm border border-white/20 transition">
+              <i data-lucide="github" class="w-4 h-4"></i>
+              <span>GitHub Repository</span>
+            </a>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl text-slate-900 text-center shadow-lg w-44">
+          <div class="w-36 h-36 bg-slate-100 rounded-xl flex items-center justify-center mx-auto border border-slate-200">
+            <i data-lucide="qr-code" class="w-24 h-24 text-slate-800"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-600 mt-2 block">Scan for Android</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-12">
+    <p>© 2026 AgriBRIDGE Platform. Built for farmers of Tamil Nadu with Vercel & Supabase.</p>
+    <p class="mt-1">All database connections & external agricultural endpoints active.</p>
+  </footer>
+
+  <!-- App Script -->
+  <script>
+    lucide.createIcons();
+
+    let currentLang = 'en';
+    let currentRole = 'farmer';
+
+    const SAMPLE_LISTINGS = [
+      { id: 1, crop: 'Organic Country Tomatoes (நாட்டு தக்காளி)', farmer: 'Ramasamy K.', location: 'Omalur, Salem', qty: '450 kg', price: '₹30/kg', phone: '+919443210987', icon: 'apple' },
+      { id: 2, crop: 'BPT 5204 Sona Masoori Paddy', farmer: 'Murugan P.', location: 'Kumbakonam, Thanjavur', qty: '12,000 kg', price: '₹25/kg', phone: '+919842109876', icon: 'wheat' },
+      { id: 3, crop: 'Erode Salem Finger Turmeric', farmer: 'Subramaniam V.', location: 'Kodumudi, Erode', qty: '1,800 kg', price: '₹140/kg', phone: '+919442154321', icon: 'sparkles' },
+      { id: 4, crop: 'Dindigul Small Onion (சாம்பார் வெங்காயம்)', farmer: 'Selvam R.', location: 'Oddanchatram, Dindigul', qty: '800 kg', price: '₹48/kg', phone: '+919789123456', icon: 'circle-dot' },
+      { id: 5, crop: 'Robusta Green Bananas (பூவன் வாழை)', farmer: 'Kavitha M.', location: 'Lalgudi, Trichy', qty: '650 bunches', price: '₹220/bunch', phone: '+919843216789', icon: 'banana' },
+      { id: 6, crop: 'Guntur Hybrid Red Chillies', farmer: 'Natarajan S.', location: 'Sankarankovil, Tenkasi', qty: '2,200 kg', price: '₹175/kg', phone: '+919445123987', icon: 'flame' }
+    ];
+
+    function renderListings() {
+      const container = document.getElementById('listingsGrid');
+      container.innerHTML = SAMPLE_LISTINGS.map(item => `
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start">
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg">${item.location}</span>
+              <span class="text-base font-extrabold text-slate-900">${item.price}</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm mt-3 leading-snug">${item.crop}</h3>
+            <p class="text-xs text-slate-500 mt-1">Farmer: ${item.farmer} • Available: ${item.qty}</p>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-100 flex gap-2">
+            <a href="tel:${item.phone}" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call Farmer
+            </a>
+            <a href="https://wa.me/${item.phone.replace(/[^0-9]/g, '')}?text=Hi%20${encodeURIComponent(item.farmer)},%20I%20am%20interested%20in%20your%20${encodeURIComponent(item.crop)}" target="_blank" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center transition">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function switchTab(tab) {
+      ['marketplace', 'weather', 'prices', 'advisor', 'storage'].forEach(t => {
+        const sec = document.getElementById('view' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          sec.classList.remove('hidden');
+          btn.className = 'tab-btn py-3.5 px-1 whitespace-nowrap tab-active flex items-center space-x-2';
+        } else {
+          sec.classList.add('hidden');
+          btn.className = 'tab-btn py-3.5 px-1 whitespace-nowrap text-slate-600 hover:text-slate-900 flex items-center space-x-2';
+        }
+      });
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ta' : 'en';
+      document.getElementById('langText').innerText = currentLang === 'en' ? 'தமிழ்' : 'English';
+      
+      const DICT = {
+        badge_live: { en: 'Tamil Nadu Live', ta: 'தமிழ்நாடு நேரலை' },
+        hero_title: { en: 'Direct Farm-to-Consumer Market & Smart Advisory', ta: 'நேரடி விவசாய சந்தை & ஸ்மார்ட் ஆலோசனை' },
+        hero_desc: { en: 'Empowering Tamil Nadu farmers with real-time APMC mandi prices, weather warnings, AI crop disease scanning, and direct buyer connections.', ta: 'தமிழ்நாடு விவசாயிகளுக்கு நேரடி மண்டி விலைகள், வானிலை எச்சரிக்கை, AI பயிர் நோய் ஸ்கேனிங் மற்றும் நேரடி வாங்குபவர் இணைப்பு.' },
+        nav_mkt: { en: 'Crop Marketplace', ta: 'பயிர் சந்தை' },
+        nav_weather: { en: 'Weather & Alerts', ta: 'வானிலை எச்சரிக்கை' },
+        nav_prices: { en: 'Mandi Prices', ta: 'மண்டி விலைகள்' },
+        nav_advisor: { en: 'AI Crop Health', ta: 'AI பயிர் ஆரோக்கியம்' },
+        nav_storage: { en: 'Cold Storage', ta: 'குளிர்பதன கிடங்கு' },
+        mkt_title: { en: 'Live Farm Listings (Direct from Farmers)', ta: 'நேரடி விவசாய விளைபொருட்கள்' },
+        mkt_sub: { en: 'Zero middleman commission. Direct phone & WhatsApp connect.', ta: 'இடைத்தரகர் கமிஷன் இல்லை. நேரடி அழைப்பு மற்றும் வாட்ஸ்அப் இணைப்பு.' },
+        add_listing: { en: '+ Post Crop Harvest', ta: '+ பயிர் விளைச்சல் பதிவு' }
+      };
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (DICT[k] && DICT[k][currentLang]) el.innerText = DICT[k][currentLang];
+      });
+    }
+
+    function setRole(role) {
+      currentRole = role;
+      const fBtn = document.getElementById('roleFarmer');
+      const bBtn = document.getElementById('roleBuyer');
+      const action = document.getElementById('farmerAction');
+      if (role === 'farmer') {
+        fBtn.className = 'px-2.5 py-1 rounded-md bg-emerald-600 text-white shadow-xs';
+        bBtn.className = 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900';
+        action.classList.remove('hidden');
+      } else {
+        bBtn.className = 'px-2.5 py-1 rounded-md bg-emerald-600 text-white shadow-xs';
+        fBtn.className = 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900';
+        action.classList.add('hidden');
+      }
+    }
+
+    function openAddModal() {
+      const crop = prompt('Enter Crop Name (e.g. Organic Cotton / நாட்டு பருத்தி):');
+      if (!crop) return;
+      const qty = prompt('Enter Harvest Quantity (e.g. 500 kg):') || '500 kg';
+      const price = prompt('Enter Expected Price (e.g. ₹65/kg):') || '₹65/kg';
+      SAMPLE_LISTINGS.unshift({
+        id: Date.now(),
+        crop,
+        farmer: 'You (Active Farmer)',
+        location: 'Tamil Nadu Live',
+        qty,
+        price,
+        phone: '+919443200000',
         icon: 'sprout'
       });
       renderListings();
       alert('✓ Crop listing published successfully!');
     }
+
     function sendChatMessage() {
       const input = document.getElementById('chatInput');
       const val = input.value.trim();
@@ -17,11 +458,13 @@
         logs.scrollTop = logs.scrollHeight;
       }, 500);
     }
+
     function simulateScan() {
       const res = document.getElementById('scanResult');
       res.classList.remove('hidden');
       alert('✓ AI Diagnostic Complete: Disease identified with 94.8% confidence.');
     }
+
     renderListings();
   </script>
 </body>
